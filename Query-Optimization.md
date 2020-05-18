@@ -159,6 +159,6 @@ CREATE INDEX country_id ON _cities(country_id); -- створення індек
 
 ## 6. Автори
 
-* Василиненко Даніїл [ссылка с title элементом](http://example.com/link "github")
+*  [Василиненко Даніїл](http://example.com/link "github")
 
-* Головко Андрій [ссылка с title элементом](http://example.com/link "github")
+*  [Головко Андрій](http://example.com/link "github")
