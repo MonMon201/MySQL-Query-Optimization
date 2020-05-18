@@ -22,11 +22,9 @@ select * from table0 WHERE a = 1; -- Поганий вид запиту
 
 **вивід EXPLAIN**
 
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
-| id | select_type | table      | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
-|  1 | SIMPLE      | _countries | NULL       | ALL  | NULL          | NULL | NULL    | NULL |  234 |    11.11 | Using where |
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
+| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
 
 **висновок**
 
@@ -42,11 +40,9 @@ select * from table0 WHERE b = 1; -- Оптимальний вид запиту
 
 **вивід EXPLAIN**
 
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
-| id | select_type | table      | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
-|  1 | SIMPLE      | _countries | NULL       | ALL  | NULL          | NULL | NULL    | NULL |  234 |    11.11 | Using where |
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
+| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
 
 **висновок**
 
@@ -64,11 +60,9 @@ select * from table0 WHERE a = 1; -- Поганий вид запиту
 
 **вивід EXPLAIN**
 
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
-| id | select_type | table      | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
-|  1 | SIMPLE      | _countries | NULL       | ALL  | NULL          | NULL | NULL    | NULL |  234 |    11.11 | Using where |
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
+| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
 
 **висновок**
 
@@ -84,11 +78,9 @@ select * from table0 WHERE b = 1; -- Оптимальний вид запиту
 
 **вивід EXPLAIN**
 
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
-| id | select_type | table      | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
-|  1 | SIMPLE      | _countries | NULL       | ALL  | NULL          | NULL | NULL    | NULL |  234 |    11.11 | Using where |
-+----+-------------+------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
+| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
 
 **висновок**
 
