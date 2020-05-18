@@ -162,3 +162,7 @@ CREATE INDEX country_id ON _cities(country_id); -- створення індек
 *  [Василиненко Даніїл](http://example.com/link "github")
 
 *  [Головко Андрій](http://example.com/link "github")
+
+## 7. Посилання
+
+*  [Документація про оптимізацію в MySQL](https://dev.mysql.com/doc/refman/8.0/en/optimization.html "MySQL Optimization Documentaion")
