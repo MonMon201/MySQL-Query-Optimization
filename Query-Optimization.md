@@ -131,7 +131,7 @@ select * from geodata._cities where (city_id, country_id) in ( ('3772493', '119'
 
 ```sql
 . . .
-select * from gselect * from geodata._cities where (city_id = '3772493' and country_id = '119') or (city_id = '5418924' and country_id = '200');eodata._cities where city_id = '3772513' or city_id = '3772277';
+select * from gselect * from geodata._cities where (city_id = '3772493' and country_id = '119') or (city_id = '5418924' and country_id = '200');
 . . .
 ```
 
