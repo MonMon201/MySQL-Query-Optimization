@@ -247,7 +247,7 @@ MySQL підтримує використання унікальних інде�
 
 ```sql
 . . .
-select * from geodata._cities where city_id = ''4027457';
+select * from geodata._cities where city_id = '4027457';
 . . .
 ```
 
