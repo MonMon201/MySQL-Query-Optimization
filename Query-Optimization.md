@@ -283,7 +283,7 @@ create index idx_region on _cities(region_id);
 
 **вивід EXPLAIN**
 
-| id | select_type | table   | partitions | type        | possible_keys          | key                    | key_len | ref  | rows | filtered | 
+| id | select_type | table   | partitions | type        | possible_keys          | key                    | key_len | ref  | rows | filtered | Extra |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | index_merge | idx_country,idx_region | idx_region,idx_country | 5,4     | NULL |    3 |   100.00 | Using intersect(idx_region,idx_country); Using where |
 
