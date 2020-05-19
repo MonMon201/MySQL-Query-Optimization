@@ -89,6 +89,7 @@ select * from geodata._cities where city_id in ('3772513', '3772277');
 
 **вивід EXPLAIN**
 | id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
 |  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |    20.00 | Using where |
 
 
@@ -102,6 +103,7 @@ select * from geodata._cities where city_id = '3772513' or city_id = '3772277';
 
 **вивід EXPLAIN**
 | id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |    19.00 | Using where |
 
 
@@ -118,6 +120,7 @@ select * from geodata._cities where (city_id, country_id) in ( ('3772493', '119'
 ```
 
 | id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |     2.00 | Using where |
 
 
@@ -131,6 +134,7 @@ select * from gselect * from geodata._cities where (city_id = '3772493' and coun
 
 **вивід EXPLAIN**
 | id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |     1.99 | Using where |
 
 
@@ -197,6 +201,7 @@ select * from geodata._cities where region_id = '4024696';
 **вивід EXPLAIN**
 
 | id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |    10.00 | Using where |
 
 ### Створення Індексу
@@ -212,6 +217,7 @@ create index idx_region on _cities(region_id);
 **вивід EXPLAIN**
 
 | id | select_type | table   | partitions | type | possible_keys | key        | key_len | ref   | rows | filtered | Extra |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | ref  | idx_region    | idx_region | 5       | const |  625 |   100.00 | NULL  |
 
 ## 4.2 Унікальні Індекси
@@ -228,6 +234,7 @@ select * from geodata._cities where city_id = ''4027457';
 
 **вивід EXPLAIN**
 | id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |    10.00 | Using where |
 
 ### Створення Індексу
@@ -260,6 +267,7 @@ select * from geodata._cities where country_id = '176' and region_id = '4024696'
 **вивід EXPLAIN**
 
 | id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |     1.00 | Using where |
 
 ### Створення Індексу
@@ -275,7 +283,8 @@ create index idx_region on _cities(region_id);
 
 **вивід EXPLAIN**
 
-| id | select_type | table   | partitions | type        | possible_keys          | key                    | key_len | ref  | rows | filtered | Extra                                                |
+| id | select_type | table   | partitions | type        | possible_keys          | key                    | key_len | ref  | rows | filtered | 
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | index_merge | idx_country,idx_region | idx_region,idx_country | 5,4     | NULL |    3 |   100.00 | Using intersect(idx_region,idx_country); Using where |
 
 ### Висновок
