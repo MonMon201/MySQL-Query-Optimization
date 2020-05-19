@@ -39,8 +39,7 @@ select * from geodata._cities where city_id < 1000000 and country_id > 100 or ci
 
 ```SQL
 . . .
-select * from geodata._cities where city_id < region_id and region_id = '3767477' and city_id = '3767455'
-;
+select * from geodata._cities where city_id < region_id and region_id = '3767477' and city_id = '3767455';
 . . .
 ```
 
@@ -48,8 +47,7 @@ select * from geodata._cities where city_id < region_id and region_id = '3767477
 
 ```SQL
 . . .
-select * from geodata._cities where '3767455' < region_id and region_id = '3767477' and city_id = '3767455'
-;
+select * from geodata._cities where '3767455' < region_id and region_id = '3767477' and city_id = '3767455';
 . . .
 ```
 
@@ -62,8 +60,7 @@ select * from geodata._cities where '3767455' < region_id and region_id = '37674
 
 ```SQL
 . . .
-select * from geodata._cities where city_id < region_id and region_id = '3767477' and city_id = '3767455'
-;
+select * from geodata._cities where city_id < region_id and region_id = '3767477' and city_id = '3767455';
 . . .
 ```
 
@@ -71,8 +68,7 @@ select * from geodata._cities where city_id < region_id and region_id = '3767477
 
 ```SQL
 . . .
-select * from geodata._cities where region_id = '3767477' and city_id = '3767455'
-;
+select * from geodata._cities where region_id = '3767477' and city_id = '3767455';
 . . .
 ```
 
