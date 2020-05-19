@@ -16,7 +16,7 @@
 
 **Неоптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where (((city_id < 1000000) and (country_id > 100)) or ((city_id <
 1000000) and (country_id < 100)));
@@ -25,7 +25,7 @@ select * from geodata._cities where (((city_id < 1000000) and (country_id > 100)
 
 **Оптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where city_id < 1000000 and country_id > 100 or city_id < 1000000 and country_id < 100;
 . . .
@@ -37,7 +37,7 @@ select * from geodata._cities where city_id < 1000000 and country_id > 100 or ci
 
 **Неоптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where city_id < region_id and region_id = '3767477' and city_id = '3767455';
 . . .
@@ -45,7 +45,7 @@ select * from geodata._cities where city_id < region_id and region_id = '3767477
 
 **Оптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where '3767455' < region_id and region_id = '3767477' and city_id = '3767455';
 . . .
@@ -58,7 +58,7 @@ select * from geodata._cities where '3767455' < region_id and region_id = '37674
 
 **Неоптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where city_id < region_id and region_id = '3767477' and city_id = '3767455';
 . . .
@@ -66,7 +66,7 @@ select * from geodata._cities where city_id < region_id and region_id = '3767477
 
 **Оптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where region_id = '3767477' and city_id = '3767455';
 . . .
@@ -83,7 +83,7 @@ select * from geodata._cities where region_id = '3767477' and city_id = '3767455
 
 **Неоптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where city_id in ('3772513', '3772277');
 . . .
@@ -97,7 +97,7 @@ select * from geodata._cities where city_id in ('3772513', '3772277');
 
 **Оптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where city_id = '3772513' or city_id = '3772277';
 . . .
@@ -116,7 +116,7 @@ select * from geodata._cities where city_id = '3772513' or city_id = '3772277';
 
 **Неоптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where (city_id, country_id) in ( ('3772493', '119'), ('5418924', '200') );
 . . .
@@ -129,7 +129,7 @@ select * from geodata._cities where (city_id, country_id) in ( ('3772493', '119'
 
 **Оптимізований запит**
 
-```SQL
+```sql
 . . .
 select * from gselect * from geodata._cities where (city_id = '3772493' and country_id = '119') or (city_id = '5418924' and country_id = '200');eodata._cities where city_id = '3772513' or city_id = '3772277';
 . . .
@@ -151,13 +151,13 @@ select * from gselect * from geodata._cities where (city_id = '3772493' and coun
 Використовується при вибірці, під час виконання якої значення одного з індексів може залишатись незмінним для певної кількості значень, що дозволяє згрупувати такі значення і використовувати індекс, визначений в першому значенні з цієї групи.
 
 **Реалізація методу наявна в подібних запитах:**
-```SQL
+```sql
 select distinct country_id, region_ru from geodata._cities;
 select country_id, region_id, min(city_id) from geodata._cities group by country_id, region_id;
 ```
 
 **Запити, в яких (та подібих їм) даний метод не може бути реалізованим:**
-```SQL
+```sql
 select count(distinct country_id, region_id), count(distinct city_id, region_id) from _cities;
 select country_id, region_id, count(*) from geodata._cities group by country_id, region_id;
 ```
@@ -167,7 +167,7 @@ select country_id, region_id, count(*) from geodata._cities group by country_id,
 На відміну від Loose Index Scan, Tight Index Scan вибирає підходящі за умовою значення, а вже потім їх групує. Тобто, всі подібні приклади, що підходять до попередьного індексу, не підходять до цього.
 
 **Реалізація методу наявна в подібних запитах:**
-```SQL
+```sql
 select country_id, region_id, city_id from geodata._cities where region_id = '4024696' group by city_id, country_id;
 ```
 
@@ -201,7 +201,7 @@ select country_id, region_id, city_id from geodata._cities where region_id = '40
 
 ### Запит без індексу
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where region_id = '4024696';
 . . .
@@ -215,7 +215,7 @@ select * from geodata._cities where region_id = '4024696';
 
 ### Створення Індексу
 
-```SQL
+```sql
 . . .
 create index idx_region on _cities(region_id);
 . . .
@@ -223,7 +223,7 @@ create index idx_region on _cities(region_id);
 
 ### Використання Індексу  
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where region_id = '4024696';
 . . .
@@ -245,7 +245,7 @@ MySQL підтримує використання унікальних інде�
 
 ### Запит без індексу
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where city_id = ''4027457';
 . . .
@@ -258,7 +258,7 @@ select * from geodata._cities where city_id = ''4027457';
 
 ### Створення Індексу
 
-```SQL
+```sql
 . . .
 create index idx_city on _cities(city_id);
 . . .
@@ -281,7 +281,7 @@ create index idx_city on _cities(city_id);
 
 ### Запит без індексу
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where country_id = '176' and region_id = '4024696';
 . . .
@@ -295,7 +295,7 @@ select * from geodata._cities where country_id = '176' and region_id = '4024696'
 
 ### Створення Індексу
 
-```SQL
+```sql
 . . .
 CREATE INDEX country_region_id ON _cities(country_id, region_id);
 . . .
@@ -303,7 +303,7 @@ CREATE INDEX country_region_id ON _cities(country_id, region_id);
 
 ### Використання Індексу
 
-```SQL
+```sql
 . . .
 select * from geodata._cities where country_id = '176' and region_id = '4024696';
 . . .
