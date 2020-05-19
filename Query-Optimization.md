@@ -8,85 +8,159 @@
 
 У цьому розділі розглядаються оптимізації, які можна зробити для обробки запитів з WHERE. У прикладах використовуються оператори SELECT, але ті ж самі оптимізації застосовуються у операторах DELETE та UPDATE.
 
-### 1.1 Оптимізація чогось . . .
+### 1.1 Відкидання непотрібних дужок для виразів
 
 **Неоптимізований запит**
 
 ```SQL
 . . .
-select * from table0 WHERE a = 1; -- Поганий вид запиту
+select * from geodata._cities where (((city_id < 1000000) and (country_id > 100)) or ((city_id <
+1000000) and (country_id < 100))); -- Поганий вид запиту
 . . .
 ```
-
-**результат запиту**
-
-**вивід EXPLAIN**
-
-| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
-| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
-
-**висновок**
 
 **Оптимізований запит**
 
 ```SQL
 . . .
-select * from table0 WHERE b = 1; -- Оптимальний вид запиту
+select * from geodata._cities where city_id < 1000000 and country_id > 100 or city_id < 1000000 and country_id < 100; -- Оптимальний вид запиту
 . . .
 ```
-
-**результат запиту**
-
-**вивід EXPLAIN**
-
-| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
-| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
-
 **висновок**
+Краще писати зрозуміліше та прибрати непотрібні дужки, що роблять запит громіздким.
 
-### 1.2 Оптимізація чогось . . .
+### 1.2 Згортання непотрібних констант
 
 **Неоптимізований запит**
 
 ```SQL
 . . .
-select * from table0 WHERE a = 1; -- Поганий вид запиту
+select * from geodata._cities where city_id < region_id and region_id = '3767477' and city_id = '3767455'
+; -- Поганий вид запиту
 . . .
 ```
-
-**результат запиту**
-
-**вивід EXPLAIN**
-
-| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
-| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
-
-**висновок**
 
 **Оптимізований запит**
 
 ```SQL
 . . .
-select * from table0 WHERE b = 1; -- Оптимальний вид запиту
+select * from geodata._cities where '3767455' < region_id and region_id = '3767477' and city_id = '3767455'
+; -- Оптимальний вид запиту
 . . .
 ```
 
-**результат запиту**
+**висновок**
+Якщо є можливість уникнути додаткової умови для константи і значення виразу відоме, то це значення можна зразу записати в необхідну умову.
 
-**вивід EXPLAIN**
+### 1.3 Відкидання умов
 
-| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
-| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
+**Неоптимізований запит**
+
+```SQL
+. . .
+select * from geodata._cities where city_id < region_id and region_id = '3767477' and city_id = '3767455'
+; -- Поганий вид запиту
+. . .
+```
+
+**Оптимізований запит**
+
+```SQL
+. . .
+select * from geodata._cities where region_id = '3767477' and city_id = '3767455'
+; -- Оптимальний вид запиту
+. . .
+```
 
 **висновок**
+Іноді краще переписати умову запиту, знаючи необхідні дані, аніж доповнювати запит новими підумовами, нагромаджуючи запит.
 
 ## 2. Оптимізація запитів з діапазоном
 
+### 2.1 Оптимізація мало- та багатозначних конструкцій
+
+**Неоптимізований запит**
+
+```SQL
+. . .
+select * from geodata._cities where city_id in ('3772513', '3772277');
+. . .
+```
+
+**вивід EXPLAIN**
+| id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+|  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |    20.00 | Using where |
+
+
+**Оптимізований запит**
+
+```SQL
+. . .
+select * from geodata._cities where city_id = '3772513' or city_id = '3772277';
+. . .
+```
+
+**вивід EXPLAIN**
+| id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+|  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |    19.00 | Using where |
+
+
+**висновок**
+Якщо для запиту портібно декілька (небагато) значень для перевірки індекса, то краже використовувати логічне додавання (перебір) значень за допомогою OR, ніж пошук в колекції з IN оператором, так як відсоток фільтрації значень в першому випадку менший, що свідчить про вищу якіть фільтрації значень. 
+
+### 2.1 Оптимізація конструкторів ряду
+
+**Неоптимізований запит**
+
+```SQL
+. . .
+select * from geodata._cities where (city_id, country_id) in ( ('3772493', '119'), ('5418924', '200') );. . .
+```
+
+| id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+|  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |     2.00 | Using where |
+
+
+**Оптимізований запит**
+
+```SQL
+. . .
+select * from gselect * from geodata._cities where (city_id = '3772493' and country_id = '119') or (city_id = '5418924' and country_id = '200');eodata._cities where city_id = '3772513' or city_id = '3772277';
+. . .
+```
+
+**вивід EXPLAIN**
+| id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+|  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |     1.99 | Using where |
+
+
+**висновок**
+Оптимізація працює аналогічно попередньому прикладу. 
+
 ## 3. Оптимізація запитів з GROUP BY
+
+### 3.1 Loose Index Scan
+Використовується при вибірці, під час виконання якої значення одного з індексів може залишатись незмінним для певної кількості значень, що дозволяє згрупувати такі значення і використовувати індекс, визначений в першому значенні з цієї групи.
+
+**Реалізація методу наявна в подібних запитах:**
+```SQL
+select distinct country_id, region_ru from geodata._cities;
+select country_id, region_id, min(city_id) from geodata._cities group by country_id, region_id;
+```
+
+**Запити, в яких (та подібих їм) даний метод не може бути реалізованим:**
+```SQL
+select count(distinct country_id, region_id), count(distinct city_id, region_id) from _cities;
+select country_id, region_id, count(*) from geodata._cities group by country_id, region_id;
+```
+
+### 3.2 Tight Index Scan
+На відміну від Loose Index Scan, вибирає підходящі за умовою значення, а вже потім іх групує. Тобто, всі подібні приклади, що підходять до попередьного індексу, не підходять до цього.
+
+**Реалізація методу наявна в подібних запитах:**
+```SQL
+select country_id, region_id, city_id from geodata._cities where region_id = '4024696' group by city_id, country_id;
+```
 
 ## 4. Індекси в MySQL
 
@@ -116,36 +190,93 @@ select * from table0 WHERE b = 1; -- Оптимальний вид запиту
 
 ```SQL
 . . .
-select * from table0 WHERE a = 1; -- запит без індексу
+select * from geodata._cities where region_id = '4024696';
 . . .
 ```
 
-**результат запиту**
-
 **вивід EXPLAIN**
 
-| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
-| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
-
+| id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+|  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |    10.00 | Using where |
 
 ### Створення Індексу
 
 ```SQL
 . . .
-CREATE INDEX country_id ON _cities(country_id); -- створення індексу
+create index idx_region on _cities(region_id);
 . . .
 ```
 
 ### Використання Індексу
 
-**результат запиту**
+**вивід EXPLAIN**
+
+| id | select_type | table   | partitions | type | possible_keys | key        | key_len | ref   | rows | filtered | Extra |
+|  1 | SIMPLE      | _cities | NULL       | ref  | idx_region    | idx_region | 5       | const |  625 |   100.00 | NULL  |
+
+## 4.2 Унікальні Індекси
+
+### Без Індексу
+
+**Запит без індексу**
+
+```SQL
+. . .
+select * from geodata._cities where city_id = ''4027457';
+. . .
+```
+
+**вивід EXPLAIN**
+| id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+|  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |    10.00 | Using where |
+
+### Створення Індексу
+
+```SQL
+. . .
+create index idx_city on _cities(city_id);
+. . .
+```
+
+### Використання Індексу
 
 **вивід EXPLAIN**
 
-| id | select_type | table | partitions | type | possible_keys | key | key_len | ref  | rows | filtered | Extra |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
-| 1 | SIMPLE | _countries | NULL | ALL | NULL | NULL | NULL | NULL |  234 | 11.11 | Using where |
+| id | select_type | table   | partitions | type | possible_keys | key      | key_len | ref   | rows | filtered | Extra |
+|  1 | SIMPLE      | _cities | NULL       | ref  | idx_city      | idx_city | 4       | const |    1 |   100.00 | NULL  |
+
+## 4.3 Складені Індекси
+
+### Без Індексу
+
+**Запит без індексу**
+
+```SQL
+. . .
+select * from geodata._cities where country_id = '176' and region_id = '4024696';
+. . .
+```
+
+**вивід EXPLAIN**
+
+| id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows    | filtered | Extra       |
+|  1 | SIMPLE      | _cities | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 1851220 |     1.00 | Using where |
+
+### Створення Індексу
+
+```SQL
+. . .
+create index idx_country on _cities(country_id);
+create index idx_region on _cities(region_id);
+. . .
+```
+
+### Використання Індексу
+
+**вивід EXPLAIN**
+
+| id | select_type | table   | partitions | type        | possible_keys          | key                    | key_len | ref  | rows | filtered | Extra                                                |
+|  1 | SIMPLE      | _cities | NULL       | index_merge | idx_country,idx_region | idx_region,idx_country | 5,4     | NULL |    3 |   100.00 | Using intersect(idx_region,idx_country); Using where |
 
 ### Висновок
 
