@@ -327,7 +327,7 @@ select * from geodata._cities where country_id = '176' and region_id = '4024696'
 
 ## 5. Висновок
 
-. . . Більше про оптимізацію ви зможете дізнатися в [офіційній документації MySQL](https://dev.mysql.com/doc/refman/8.0/en/optimization.html "MySQL Optimization Documentaion.").
+Оптимізація запитів MySQL важлива частина діяльності, бо, як ви могли переконатися, оптимізовані запити працюють набагато краще, використовуючи набагато менше ресурсів процесору, часу та пам'яті. Ця стаття освітлює лише частину усіх можливих рішень для оптимізації запитів в MySQL, більше ви зможете дізнатися в [офіційній документації MySQL](https://dev.mysql.com/doc/refman/8.0/en/optimization.html "MySQL Optimization Documentaion.").
 
 ## 6. Автори
 
@@ -337,4 +337,6 @@ select * from geodata._cities where country_id = '176' and region_id = '4024696'
 
 ## 7. Посилання
 
-*  [Документація про оптимізацію в MySQL](https://dev.mysql.com/doc/refman/8.0/en/optimization.html "MySQL Optimization Documentaion")
+*   [Документація про оптимізацію в MySQL](https://dev.mysql.com/doc/refman/8.0/en/optimization.html "MySQL Optimization Documentaion")
+
+*   [Документація InnoDB Cluster](https://dev.mysql.com/doc/refman/8.0/en/mysql-innodb-cluster-userguide.html "InnoDB Cluster."). 
