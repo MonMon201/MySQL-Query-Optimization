@@ -250,6 +250,7 @@ create index idx_city on _cities(city_id);
 **вивід EXPLAIN**
 
 | id | select_type | table   | partitions | type | possible_keys | key      | key_len | ref   | rows | filtered | Extra |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  1 | SIMPLE      | _cities | NULL       | ref  | idx_city      | idx_city | 4       | const |    1 |   100.00 | NULL  |
 
 ## 4.3 Складені Індекси
